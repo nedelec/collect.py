@@ -32,7 +32,7 @@ Examples:
     collect.py --copy image%04i.png 1 run*/image.png"
        will copy the image files, starting at index 1
     
-F. Nedelec, 2012--2017.
+F. Nedelec, 2012--2017. Last modified 21.08.2017
 """
 
 
@@ -40,26 +40,6 @@ import sys, shutil, os
 
 
 #------------------------------------------------------------------------
-
-
-def move(paths, pattern, idx):
-    """rename files using consecutive numbers"""
-    import os
-    res = []
-    for src in paths:
-        while idx < 1000000:
-            dst = pattern % idx
-            idx += 1
-            if dst == src:
-                res.append(dst)
-                break
-            if not os.path.exists(dst):
-                os.rename(src, dst)
-                res.append(dst)
-                print("%s -> %s" % (src, dst))
-                break
-    return res
-
 
 def copy_recursive(src, dst):
     """Copy directory recursively"""
@@ -77,41 +57,30 @@ def copy_recursive(src, dst):
             copy_recursive(s, d)
 
 
-def copy(paths, pattern, idx):
-    """move files to 'root????' where '????' are consecutive numbers"""
-    res = []
-    for src in paths:
-        while idx < 1000000:
-            dst = pattern % idx
-            idx += 1
-            if not os.path.exists(dst):
-                copy_recursive(src, dst)
-                res.append(dst)
-                print("%s -> %s" % (src, dst))
-                break
-    return res
-
-
 def main(args):
     """rename files"""
- 
- pattern = args.pop(0);
-    
+    do_copy = False
+    arg = args.pop(0);
+    # check if 'copy' specified before pattern
+    if arg=='-c' or arg=='--copy' or arg=='copy=1':
+        do_copy = True
+        pattern = args.pop(0);
+    else:
+        pattern = arg
+    # check validity of the pattern
     if os.path.isfile(pattern):
         sys.stderr.write("Error: first argument should be the pattern used to build output file name")
         return 1
-    
     try:
         pattern % 0
     except:
-        sys.stderr.write("Error: the pattern should accept integers: eg. '%i' or '%04i' ")
+        sys.stderr.write("Error: the pattern should accept an integer: eg. '%i' or '%04i'\n")
         return 1
-
     paths = []
     idx = 0
-   
+    # parse arguments:
     for arg in args:
-        if arg == '-copy' or arg == '--copy':
+        if arg=='-c' or arg=='--copy' or arg=='copy=1':
             do_copy = True
         elif args[0].isdigit():
             idx = int(args[0])
@@ -120,14 +89,30 @@ def main(args):
         else:
             sys.stderr.write("Error: '%s' is not a file or directory" % arg)
             return 1
-    
-    try:
-        if do_copy:
-            copy(paths, pattern, idx)
-        else:
-            move(paths, pattern, idx)
-    except IOError as e:
-        sys.stderr.write("Error: "+repr(e))
+    # process all files
+    res = []
+    for src in paths:
+        while idx < 1000000:
+            dst = pattern % idx
+            idx += 1
+            if dst == src:
+                res.append(dst)
+                break
+            if not os.path.exists(dst):
+                #make directory if name include a directory that does not exist:
+                dir = os.path.dirname(dst)
+                if dir and not os.path.isdir(dir):
+                    os.mkdir(dir)
+                # process file:
+                if do_copy:
+                    copy_recursive(src, dst)
+                else:
+                    os.rename(src, dst)
+                res.append(dst)
+                print("%s -> %s" % (src, dst))
+                break
+    return res
+
 
 #------------------------------------------------------------------------
 

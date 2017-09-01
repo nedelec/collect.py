@@ -32,11 +32,11 @@ Examples:
     collect.py --copy image%04i.png 1 run*/image.png"
        will copy the image files, starting at index 1
     
-F. Nedelec, 2012--2017. Last modified 21.08.2017
+F. Nedelec, 2012--2017. Last modified 1.09.2017
 """
 
 
-import sys, shutil, os
+import sys, shutil, os, curses.ascii
 
 
 #------------------------------------------------------------------------
@@ -71,11 +71,16 @@ def main(args):
     if os.path.isfile(pattern):
         sys.stderr.write("Error: first argument should be the pattern used to build output file name")
         return 1
+    pattern % 0
     try:
-        pattern % 0
+        str = ( pattern % 0 )
     except:
         sys.stderr.write("Error: the pattern should accept an integer: eg. '%i' or '%04i'\n")
         return 1
+    for c in str:
+        if curses.ascii.isspace(c):
+            sys.stderr.write("Error: the pattern includes or generates white space\n")
+            return 1
     paths = []
     idx = 0
     # parse arguments:

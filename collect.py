@@ -22,6 +22,8 @@ Arguments:
     PATTERN is a string containing '%i' or '%0Xi', for example 'image%04i.png'
     if specified, --copy will copy the files/directory instead of moving them
     if specified, INTEGER is the first index to be used (default=0)
+    If the patterns includes a directory, collect.py will attemtps to create it.
+
     PATHS is a list of file or directories
 
 Examples:
@@ -29,8 +31,11 @@ Examples:
     collect.py image%04i.png  *.png
        will rename image files to: image0000.png, image0001.png, etc.
     
-    collect.py --copy image%04i.png 1 run*/image.png"
+    collect.py --copy image%04i.png 1 run*/image.png
        will copy the image files, starting at index 1
+
+    collect.py run%04i/config.cym config*.cym
+       will create directories run???? and copy the config*.cym files to them
     
 F. Nedelec, 2012--2017. Last modified 1.09.2017
 """
@@ -79,7 +84,7 @@ def main(args):
         return 1
     for c in str:
         if curses.ascii.isspace(c):
-            sys.stderr.write("Error: the pattern includes or generates white space\n")
+            sys.stderr.write("Error: the pattern includes or generates white space character\n")
             return 1
     paths = []
     idx = 0

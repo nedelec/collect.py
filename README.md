@@ -1,7 +1,7 @@
 # collect.py
 Rename or copy specified files or directories
 
-###Synopsis:
+### Synopsis:
     
     Rename files or folders following a pattern containing an integer index,
     as in 'image0001.png'. The file will be moved in the current directory
@@ -11,11 +11,11 @@ Rename or copy specified files or directories
     overwritten, such that 'collect.py' can be used to pool together many similar
     files in a common directory.
     
-###Syntax:
+### Syntax:
     
     collect.py PATTERN [INTEGER] [--copy] PATH1 [PATH2] [PATH3] ...
 
-###Arguments:
+### Arguments:
     
     PATTERN specifies the name of the output files, and should contain a variable
     part that will be replaced by an integer. It can be a 'scanf' compatible 
@@ -32,7 +32,7 @@ Rename or copy specified files or directories
 
     PATH1, PATH2, etc. is a list of files or directories
 
-###Examples:
+### Examples:
     
     collect.py image%%%%.png  *.png
        will rename image files to: image0000.png, image0001.png, etc.
@@ -40,7 +40,7 @@ Rename or copy specified files or directories
     collect.py --copy image%%%%.png 1 run*/image.png
        will copy the image files, starting at index 1
 
-    collect.py run%%%%%/config.cym config*.cym
+    collect.py run%%%%/config.cym config*.cym
        will create directories run???? and copy the `config*.cym` files into them
     
 F. Nedelec, 2012--2017. Last modified 2.10.2017

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 #
-# collect.py
+# collect.py renames files from subdirectories
 #
-# Copyright F. Nedelec, 2007--2017
+# Copyright F. Nedelec, 2007--2018
 
 
 """
@@ -25,13 +25,13 @@ Arguments:
     PATTERN specifies the name of the output files, and should contain a variable
     part that will be replaced by an integer. It can be a 'scanf' compatible 
     pattern such as '%i' or '%0Xi', for example 'image%04i.png'.
-    A character '%' repeated multiple times, such as `%%%%` or `%%%%%%`, can be 
-    used to directly specify the size of the integer portion of the name.
+    A character '%' repeated multiple times, such as `%%%%` or `%%%%%%`, can
+    also be used to specify the size of the integer portion of the name.
     
-    The pattern can include a directory, and if this directory does not exist,
-    collect.py will attemtps to create it before moving the file.
+    The pattern can include a '/' that would indicate a directory, and if this
+    directory does not exist, collect.py will create it before moving the file.
 
-    if specified, --copy will copy the files/directory instead of moving them
+    if specified, `--copy` will copy the files/directory instead of moving them
     
     if specified, INTEGER is the first index to be used (default=0)
 
@@ -45,10 +45,10 @@ Examples:
     collect.py --copy image%%%%.png 1 run*/image.png
        will copy the image files, starting at index 1
 
-    collect.py run%%%%%/config.cym config*.cym
-       will create directories run???? and copy the `config*.cym` files into them
+    collect.py run%%%%/config.cym config*.cym
+       will create directories `run????` and move the `config*.cym` files into them
     
-F. Nedelec, 2012--2017. Last modified 2.10.2017
+F. Nedelec, 2012--2018. Last modified 2.10.2017
 """
 
 
@@ -147,7 +147,7 @@ def main(args):
 #------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or sys.argv[1]=='help' or sys.argv[1]=='--help':
+    if len(sys.argv) < 2 or sys.argv[1].endswith("help"):
         print(__doc__)
     else:
         main(sys.argv[1:])
